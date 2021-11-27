@@ -227,7 +227,7 @@ def train_one_epoch(sess, ops, train_writer):
     iou3d_correct_cnt = 0
 
     # Training with batches
-    for batch_idx in range(num_batches):
+    for batch_idx in range(round(num_batches)):
         start_idx = batch_idx * BATCH_SIZE
         end_idx = (batch_idx+1) * BATCH_SIZE
 
@@ -292,6 +292,7 @@ def eval_one_epoch(sess, ops, test_writer):
     log_string(str(datetime.now()))
     log_string('---- EPOCH %03d EVALUATION ----'%(EPOCH_CNT))
     test_idxs = np.arange(0, len(TEST_DATASET))
+    #   Round to integer to avoid float error in range()
     num_batches = len(TEST_DATASET)/BATCH_SIZE
 
     # To collect statistics
@@ -305,7 +306,7 @@ def eval_one_epoch(sess, ops, test_writer):
     iou3d_correct_cnt = 0
    
     # Simple evaluation with batches 
-    for batch_idx in range(num_batches):
+    for batch_idx in range(round(num_batches)):
         start_idx = batch_idx * BATCH_SIZE
         end_idx = (batch_idx+1) * BATCH_SIZE
 

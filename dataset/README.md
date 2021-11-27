@@ -1,4 +1,4 @@
-Download KITTI 3D object detection data and organize the folders as follows:
+  Download KITTI 3D object detection data and organize the folders as follows:
 
         dataset/KITTI/object/
 
@@ -11,4 +11,4 @@ Download KITTI 3D object detection data and organize the folders as follows:
             testing/
                 calib/
                 image_2/
-                velodyne/ 
+                velodyne/

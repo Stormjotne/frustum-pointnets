@@ -7,6 +7,7 @@ from __future__ import print_function
 
 import os
 import sys
+from pathlib import Path
 import numpy as np
 import cv2
 from PIL import Image
@@ -15,7 +16,7 @@ ROOT_DIR = os.path.dirname(BASE_DIR)
 sys.path.append(BASE_DIR)
 sys.path.append(os.path.join(ROOT_DIR, 'mayavi'))
 import kitti_util as utils
-import cPickle as pickle
+import pickle
 from kitti_object import *
 import argparse
 
@@ -26,10 +27,12 @@ def in_hull(p, hull):
         hull = Delaunay(hull)
     return hull.find_simplex(p)>=0
 
+
 def extract_pc_in_box3d(pc, box3d):
     ''' pc: (N,3), box3d: (8,3) '''
     box3d_roi_inds = in_hull(pc[:,0:3], box3d)
     return pc[box3d_roi_inds,:], box3d_roi_inds
+
 
 def extract_pc_in_box2d(pc, box2d):
     ''' pc: (N,2), box2d: (xmin,ymin,xmax,ymax) '''
@@ -40,11 +43,13 @@ def extract_pc_in_box2d(pc, box2d):
     box2d_corners[3,:] = [box2d[0],box2d[3]] 
     box2d_roi_inds = in_hull(pc[:,0:2], box2d_corners)
     return pc[box2d_roi_inds,:], box2d_roi_inds
-     
+
+
 def demo():
     import mayavi.mlab as mlab
     from viz_util import draw_lidar, draw_lidar_simple, draw_gt_boxes3d
-    dataset = kitti_object(os.path.join(ROOT_DIR, 'dataset/KITTI/object'))
+    #   dataset = kitti_object(os.path.join(ROOT_DIR, 'dataset/KITTI/object'))
+    dataset = kitti_object(Path('E:/Datasets/KITTI/object'))
     data_idx = 0
 
     # Load data from dataset
@@ -129,6 +134,7 @@ def demo():
     mlab.show(1)
     raw_input()
 
+
 def random_shift_box2d(box2d, shift_ratio=0.1):
     ''' Randomly shift box center, randomly scale width and height 
     '''
@@ -143,6 +149,7 @@ def random_shift_box2d(box2d, shift_ratio=0.1):
     h2 = h*(1+np.random.random()*2*r-r) # 0.9 to 1.1
     w2 = w*(1+np.random.random()*2*r-r) # 0.9 to 1.1
     return np.array([cx2-w2/2.0, cy2-h2/2.0, cx2+w2/2.0, cy2+h2/2.0])
+ 
  
 def extract_frustum_data(idx_filename, split, output_filename, viz=False,
                        perturb_box2d=False, augmentX=1, type_whitelist=['Car']):
@@ -163,7 +170,8 @@ def extract_frustum_data(idx_filename, split, output_filename, viz=False,
     Output:
         None (will write a .pickle file to the disk)
     '''
-    dataset = kitti_object(os.path.join(ROOT_DIR,'dataset/KITTI/object'), split)
+    #   dataset = kitti_object(os.path.join(ROOT_DIR,'dataset/KITTI/object'), split)
+    dataset = kitti_object(Path('E:/Datasets/KITTI/object'), split)
     data_idx_list = [int(line.rstrip()) for line in open(idx_filename)]
 
     id_list = [] # int number
@@ -277,9 +285,11 @@ def extract_frustum_data(idx_filename, split, output_filename, viz=False,
                 colormap='gnuplot', scale_factor=1, figure=fig)
             raw_input()
 
+
 def get_box3d_dim_statistics(idx_filename):
     ''' Collect and dump 3D bounding box statistics '''
-    dataset = kitti_object(os.path.join(ROOT_DIR,'dataset/KITTI/object'))
+    #   dataset = kitti_object(os.path.join(ROOT_DIR,'dataset/KITTI/object'))
+    dataset = kitti_object(Path('E:/Datasets/KITTI/object'))
     dimension_list = []
     type_list = []
     ry_list = []
@@ -299,6 +309,7 @@ def get_box3d_dim_statistics(idx_filename):
         pickle.dump(type_list, fp)
         pickle.dump(dimension_list, fp)
         pickle.dump(ry_list, fp)
+
 
 def read_det_file(det_filename):
     ''' Parse lines in 2D detection output files '''
@@ -336,7 +347,8 @@ def extract_frustum_data_rgb_detection(det_filename, split, output_filename,
     Output:
         None (will write a .pickle file to the disk)
     '''
-    dataset = kitti_object(os.path.join(ROOT_DIR, 'dataset/KITTI/object'), split)
+    #   dataset = kitti_object(os.path.join(ROOT_DIR, 'dataset/KITTI/object'), split)
+    dataset = kitti_object(Path('E:/Datasets/KITTI/object'), split)
     det_id_list, det_type_list, det_box2d_list, det_prob_list = \
         read_det_file(det_filename)
     cache_id = -1
@@ -421,6 +433,7 @@ def extract_frustum_data_rgb_detection(det_filename, split, output_filename,
                 colormap='gnuplot', scale_factor=1, figure=fig)
             raw_input()
 
+
 def write_2d_rgb_detection(det_filename, split, result_dir):
     ''' Write 2D detection results for KITTI evaluation.
         Convert from Wei's format to KITTI format. 
@@ -436,7 +449,8 @@ def write_2d_rgb_detection(det_filename, split, result_dir):
     Usage:
         write_2d_rgb_detection("val_det.txt", "training", "results")
     '''
-    dataset = kitti_object(os.path.join(ROOT_DIR, 'dataset/KITTI/object'), split)
+    #   dataset = kitti_object(os.path.join(ROOT_DIR, 'dataset/KITTI/object'), split)
+    dataset = kitti_object(Path('E:/Datasets/KITTI/object'), split)
     det_id_list, det_type_list, det_box2d_list, det_prob_list = \
         read_det_file(det_filename)
     # map from idx to list of strings, each string is a line without \n
@@ -460,6 +474,7 @@ def write_2d_rgb_detection(det_filename, split, result_dir):
         for line in results[idx]:
             fout.write(line+'\n')
         fout.close() 
+
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser()
